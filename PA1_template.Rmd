@@ -17,7 +17,17 @@ activity <- read.csv("activity.csv")
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 
 ```{r process_data}
+
+
+
 library(dplyr)
+library(lubridate)
+
+# convert date field to real date with lubridate
+activity$date <- parse_date_time(activity$date,"%Y-%m-%d")
+
+# convert steps to numeric
+activity$steps <- as.numeric(activity$steps)
 
 steps_day <- activity %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
@@ -106,7 +116,7 @@ activity_impute <- activity_impute %>% select(steps=steps_impute,date,interval)
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```{r}
-steps_day_impute <- activity %>% group_by(date) %>% 
+steps_day_impute <- activity_impute %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
 hist(steps_day_impute$steps_per_day)
 ```
@@ -124,12 +134,22 @@ hist(steps_day_impute$steps_per_day)
 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 ```{r}
-
+# create day group factor variable to group days into weekend (Sunday=1,Saturday=7) or weekday
+activity_impute$daygroup <- ifelse(wday(activity_impute$date,label=FALSE) %in% c(1,7),"weekend","weekday")
+# order weekends first
+activity_impute$daygroup <- ordered(activity_impute$daygroup,levels=c("weekend","weekday"))
 ```
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
 ```{r}
+library(ggplot2)
 
+# summaries by daygroup,interval
+steps_interval_impute <- activity_impute %>% group_by(daygroup,interval) %>% 
+    summarise(avg_per_interval = mean(steps),
+              med_per_interval = median(steps))
+# ggplot with day group as facets (panels)
+qplot(data=steps_interval_impute,x=interval,y=avg_per_interval,facets="daygroup~.",geom="line")
 ```
 
