@@ -39,6 +39,11 @@ activity$date <- parse_date_time(activity$date,"%Y-%m-%d")
 # convert steps to numeric
 activity$steps <- as.numeric(activity$steps)
 
+# convert 5 minute intervals to cumulate count of minutes into the day (instead of 055 -> 100 format)
+# get the modulus of 100 and multiply by 60 to get back to hours, add on remainder as minutes
+activity$interval <- ((activity$interval %/% 100) * 60) + (activity$interval %% 100)
+
+
 steps_day <- activity %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
 
@@ -86,7 +91,7 @@ text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
 # determine the interval with the highest number of steps
 max_avg_steps_interval <- steps_interval[which.max(steps_interval$avg_per_interval),]$interval
 
-# represent 5 minute interval as a time of day in 24hr time
+# represent 5 minute interval as a time of day in 24hr time - convert minutes to hr:min
 max_interval_time <- paste(max_avg_steps_interval %/% 60, max_avg_steps_interval %% 60,sep=":")
 
 # create line plot
@@ -111,7 +116,7 @@ points(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-    The time 5-minute interval with the maxium average number of steps *(approx. 206 steps)* was at **835** or **13:55 hr**.
+    The time 5-minute interval with the maxium average number of steps *(approx. 206 steps)* was at **515** or **8:35 hr**.
 
 
 ## Imputing missing values
@@ -183,7 +188,9 @@ text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
 
 
 ```r
-boxplot(steps_day_impute$steps_per_day,steps_day$steps_per_day,names=c("NAs imputed","NAs excluded"),col=c("red","blue"),main="Comparison of steps distribution before and after imputation")
+boxplot(steps_day_impute$steps_per_day,steps_day$steps_per_day,
+        names=c("NAs imputed","NAs excluded"),col=c("red","blue"),
+        main="Comparison of steps distribution before and after imputation")
 ```
 
 ![](PA1_template_files/figure-html/boxplot_imputation_impact-1.png) 
@@ -199,9 +206,11 @@ boxplot(steps_day_impute$steps_per_day,steps_day$steps_per_day,names=c("NAs impu
 
 ```r
 # create day group factor variable to group days into weekend (Sunday=1,Saturday=7) or weekday
-activity_impute$daygroup <- ifelse(wday(activity_impute$date,label=FALSE) %in% c(1,7),"weekend","weekday")
+activity_impute$daygroup <- ifelse(
+    wday(activity_impute$date,label=FALSE) %in% c(1,7),"weekend","weekday")
 # order weekends first
-activity_impute$daygroup <- ordered(activity_impute$daygroup,levels=c("weekend","weekday"))
+activity_impute$daygroup <- ordered(
+    activity_impute$daygroup,levels=c("weekend","weekday"))
 ```
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
@@ -216,7 +225,9 @@ steps_interval_impute <- activity_impute %>% group_by(daygroup,interval) %>%
               med_per_interval = median(steps))
 # ggplot line plot with day group as facets (panels)
 qplot(data=steps_interval_impute,x=interval,y=avg_per_interval,
-      facets="daygroup~.",geom="line",main="Steps over intervals by day group (weekend/weekday)", ylab="Number of steps",xlab="Interval")
+      facets="daygroup~.",geom="line",
+      main="Steps over intervals by day group (weekend/weekday)", 
+      ylab="Number of steps",xlab="Interval")
 ```
 
 ![](PA1_template_files/figure-html/steps_interval_daygroup-1.png) 
