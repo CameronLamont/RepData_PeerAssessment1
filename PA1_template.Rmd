@@ -45,10 +45,6 @@ hist(steps_day$steps_per_day)
 * Mean number of steps per day: **`r format(mean(steps_day$steps_per_day,na.rm=TRUE),digits=1) `**
 * Median number of steps per day: **`r format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1) `**
 
-|Mean|Median|
-|----|------|
-|`r format(mean(steps_day$steps_per_day,na.rm=TRUE),digits=1) `|`r format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1) `|
-
 ## What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -94,19 +90,33 @@ nrow(activity[!complete.cases(activity),])
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 ```{r}
+# use median steps for that interval to impute missing values
+activity_impute <- activity %>% 
+    mutate(steps_impute = ifelse(is.na(steps),
+            steps_interval[steps_interval$interval==activity$interval]$med_per_interval,steps))
 
 ```
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r}
-
+# replace steps with steps_impute
+activity_impute <- activity_impute %>% select(steps=steps_impute,date,interval)
 ```
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```{r}
-
+steps_day_impute <- activity %>% group_by(date) %>% 
+    summarise(steps_per_day = sum(steps))
+hist(steps_day_impute$steps_per_day)
 ```
+
+* Mean number of imputed steps per day: **`r format(mean(steps_day_impute$steps_per_day,na.rm=TRUE),digits=1) `**
+* Median number of imputed steps per day: **`r format(median(steps_day_impute$steps_per_day,na.rm=TRUE),digits=1) `**
+
+
+* Impact to Mean from imputation: **`r format(mean(steps_day$steps_per_day,na.rm=TRUE)-mean(steps_day_impute$steps_per_day,na.rm=TRUE),digits=1) `**
+* Impact to Median from: **`r format(median(steps_day$steps_per_day,na.rm=TRUE)-median(steps_day_impute$steps_per_day,na.rm=TRUE),digits=1) `**
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
