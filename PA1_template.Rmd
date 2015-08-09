@@ -48,21 +48,22 @@ median(steps_day$steps_per_day,na.rm=TRUE)
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+```{r fig.width=10}
 with(steps_interval,plot(x=interval,y=avg_per_interval,type="l",xlab="5-minute interval",
      ylab="Average number of steps taken, averaged across all days",main="Time Series average number of steps taken over 5-minute intervals"))
 
 max_avg_steps_interval <- steps_interval[which.max(steps_interval$avg_per_interval),]$interval
+# represent 5 minute interval as a time of day in 24hr time
+max_interval_time <- paste(max_avg_steps_interval %/% 60, max_avg_steps_interval %% 60,sep=":")
+
 abline(v=max_avg_steps_interval,col="blue",lwd=1)
-text(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),labels=paste("max. number of steps at interval",max_avg_steps_interval),pos=4,col="blue")
+text(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),labels=paste("max. number of steps = ",format(max(steps_interval$avg_per_interval),digits=1) ,"at interval",max_avg_steps_interval,paste0("(",max_interval_time," hr)")),pos=4,col="blue")
 points(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),pch=16,lwd=3,col="blue")
 ```
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r}
-max_avg_steps_interval
-```
 
+    The time 5-minute interval with the maxium average number of steps *(approx. `r format(max(steps_interval$avg_per_interval),digits=1) ` steps)* was at **`r max_avg_steps_interval`** or **`r max_interval_time` hr**.
 
 
 ## Imputing missing values
