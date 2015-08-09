@@ -88,7 +88,8 @@ points(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 ```{r}
-
+# count the number of non-complete.cases
+nrow(activity[!complete.cases(activity),])
 ```
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
