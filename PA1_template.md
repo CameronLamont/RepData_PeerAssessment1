@@ -172,7 +172,7 @@ text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
      labels=paste("NAs excl median = ",format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/histogram_after_imputation_plot-1.png) 
 
 * Mean number of imputed steps per day: **9504**
 * Median number of imputed steps per day: **10395**
@@ -186,7 +186,7 @@ text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
 boxplot(steps_day_impute$steps_per_day,steps_day$steps_per_day,names=c("NAs imputed","NAs excluded"),col=c("red","blue"),main="Comparison of steps distribution before and after imputation")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![](PA1_template_files/figure-html/boxplot_imputation_impact-1.png) 
 
 * Impact to Mean from imputation: **1262**
 * Impact to Median from imputation: **370**
@@ -219,5 +219,5 @@ qplot(data=steps_interval_impute,x=interval,y=avg_per_interval,
       facets="daygroup~.",geom="line",main="Steps over intervals by day group (weekend/weekday)", ylab="Number of steps",xlab="Interval")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/steps_interval_daygroup-1.png) 
 

@@ -128,7 +128,7 @@ activity_impute <- activity_impute %>% select(steps=steps_impute,date,interval)
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r}
+```{r histogram_after_imputation_plot}
 steps_day_impute <- activity_impute %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
 hist(steps_day_impute$steps_per_day,
@@ -162,7 +162,7 @@ text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
 * *Median number of steps per day (excluding NAs): **`r format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1) `***
 
 
-```{r}
+```{r boxplot_imputation_impact}
 boxplot(steps_day_impute$steps_per_day,steps_day$steps_per_day,names=c("NAs imputed","NAs excluded"),col=c("red","blue"),main="Comparison of steps distribution before and after imputation")
 ```
 
@@ -183,7 +183,7 @@ activity_impute$daygroup <- ordered(activity_impute$daygroup,levels=c("weekend",
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r}
+```{r steps_interval_daygroup}
 library(ggplot2)
 
 # summaries by daygroup,interval
