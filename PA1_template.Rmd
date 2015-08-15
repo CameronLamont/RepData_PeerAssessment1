@@ -50,13 +50,15 @@ steps_interval <- activity %>% group_by(interval) %>%
 
 1. Make a histogram of the total number of steps taken each day
 
-```{r steps_per_day_hist_plot}
+```{r steps_per_day_hist_plot,fig.width=10}
+
+# create histogram showing total steps per excluding NAs
 hist(steps_day$steps_per_day,
      main="Histogram of total number of steps each day (excluding NAs)",
      xlab="Steps per Day (excluding NAs)")
 
+# create vertical lines for mean and median
 abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
-
 abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
 
 text(x=mean(steps_day$steps_per_day,na.rm=TRUE),y=20,
@@ -64,6 +66,8 @@ text(x=mean(steps_day$steps_per_day,na.rm=TRUE),y=20,
 text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
      labels=paste("NAs excl median = ",format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
 
+# show legend to different solid and odtted lines
+legend("topright",c("mean","median"),col="blue",lty=c(1,2))
 
 ```
 
@@ -101,6 +105,8 @@ text(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),
                   paste0("(",max_interval_time," hr)")),pos=4,col="blue")
 points(x=max_avg_steps_interval,y=max(steps_interval$avg_per_interval),
        pch=16,lwd=3,col="blue")
+
+
 ```
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
@@ -133,30 +139,36 @@ activity_impute <- activity_impute %>% select(steps=steps_impute,date,interval)
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r histogram_after_imputation_plot}
+```{r histogram_after_imputation_plot,fig.width=10}
+# group imputed steps by day 
 steps_day_impute <- activity_impute %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
+# create histogram to show difference between previous distribution 
+# and imputed distribution
 hist(steps_day_impute$steps_per_day,
      main="Histogram of total number of steps each day - imputation impact",
      xlab="Steps per Day (NAs imputed with interval median)")
 
-
+# add vertical lines for imputed mean and median (red)
 abline(v=mean(steps_day_impute$steps_per_day),col="red")
-abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
-
 abline(v=median(steps_day_impute$steps_per_day),col="red",lty=2)
-abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
 
 text(x=mean(steps_day_impute$steps_per_day),y=20,
      labels=paste("imputed mean = ",format(mean(steps_day_impute$steps_per_day),digits=1)),pos=2,offset=1,col="red")
 text(x=median(steps_day_impute$steps_per_day),y=18.5,
      labels=paste("imputed median = ",format(median(steps_day_impute$steps_per_day),digits=1)),pos=2,offset=2,col="red")
 
+# add vertical lines for mean and median without NAs (blue)
+abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
+abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
 
 text(x=mean(steps_day$steps_per_day,na.rm=TRUE),y=20,
      labels=paste("NAs excl mean = ",format(mean(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
 text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
      labels=paste("NAs excl median = ",format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
+
+# show legend to differentiate solid and dotted lines
+legend("topright",c("NAs excl mean","NAs excl median","imputed mean","imputed median"),col=c("blue","blue","red","red"),lty=c(1,2,1,2))
 
 ```
 
@@ -192,7 +204,7 @@ activity_impute$daygroup <- ordered(
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r steps_interval_daygroup}
+```{r steps_interval_daygroup,fig.width=10}
 library(ggplot2)
 
 # summaries by daygroup,interval

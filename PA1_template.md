@@ -60,18 +60,22 @@ steps_interval <- activity %>% group_by(interval) %>%
 
 
 ```r
+# create histogram showing total steps per excluding NAs
 hist(steps_day$steps_per_day,
      main="Histogram of total number of steps each day (excluding NAs)",
      xlab="Steps per Day (excluding NAs)")
 
+# create vertical lines for mean and median
 abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
-
 abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
 
 text(x=mean(steps_day$steps_per_day,na.rm=TRUE),y=20,
      labels=paste("NAs excl mean = ",format(mean(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
 text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
      labels=paste("NAs excl median = ",format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
+
+# show legend to different solid and odtted lines
+legend("topright",c("mean","median"),col="blue",lty=c(1,2))
 ```
 
 ![](PA1_template_files/figure-html/steps_per_day_hist_plot-1.png) 
@@ -152,29 +156,35 @@ activity_impute <- activity_impute %>% select(steps=steps_impute,date,interval)
 
 
 ```r
+# group imputed steps by day 
 steps_day_impute <- activity_impute %>% group_by(date) %>% 
     summarise(steps_per_day = sum(steps))
+# create histogram to show difference between previous distribution 
+# and imputed distribution
 hist(steps_day_impute$steps_per_day,
      main="Histogram of total number of steps each day - imputation impact",
      xlab="Steps per Day (NAs imputed with interval median)")
 
-
+# add vertical lines for imputed mean and median (red)
 abline(v=mean(steps_day_impute$steps_per_day),col="red")
-abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
-
 abline(v=median(steps_day_impute$steps_per_day),col="red",lty=2)
-abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
 
 text(x=mean(steps_day_impute$steps_per_day),y=20,
      labels=paste("imputed mean = ",format(mean(steps_day_impute$steps_per_day),digits=1)),pos=2,offset=1,col="red")
 text(x=median(steps_day_impute$steps_per_day),y=18.5,
      labels=paste("imputed median = ",format(median(steps_day_impute$steps_per_day),digits=1)),pos=2,offset=2,col="red")
 
+# add vertical lines for mean and median without NAs (blue)
+abline(v=median(steps_day$steps_per_day,na.rm=TRUE),col="blue",lty=2,lwd=2)
+abline(v=mean(steps_day$steps_per_day,na.rm=TRUE),col="blue")
 
 text(x=mean(steps_day$steps_per_day,na.rm=TRUE),y=20,
      labels=paste("NAs excl mean = ",format(mean(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
 text(x=median(steps_day$steps_per_day,na.rm=TRUE),y=18.5,
      labels=paste("NAs excl median = ",format(median(steps_day$steps_per_day,na.rm=TRUE),digits=1)),pos=4,offset=1,col="blue")
+
+# show legend to differentiate solid and dotted lines
+legend("topright",c("NAs excl mean","NAs excl median","imputed mean","imputed median"),col=c("blue","blue","red","red"),lty=c(1,2,1,2))
 ```
 
 ![](PA1_template_files/figure-html/histogram_after_imputation_plot-1.png) 
